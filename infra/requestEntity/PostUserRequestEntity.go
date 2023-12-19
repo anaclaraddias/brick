@@ -49,8 +49,19 @@ func (user *PostUserRequestEntity) Validate() error {
 		return fmt.Errorf(helper.UserFieldCanNotBeEmptyConst, CpfFieldConst)
 	}
 
-	if err := helper.NewCpf(user.Cpf).Validate(); err != nil {
+	if err := helper.ValidateCPF(user.Cpf); err != nil {
 		return err
+	}
+
+	user.Cpf = helper.UnmaskCpf(user.Cpf)
+
+	if user.Cnpj != nil {
+		if err := helper.ValidateCNPJ(*user.Cnpj); err != nil {
+			return err
+		}
+
+		unmaskedCnpj := helper.UnmaskCnpj(*user.Cnpj)
+		user.Cnpj = &unmaskedCnpj
 	}
 
 	return nil

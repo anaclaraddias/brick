@@ -71,21 +71,43 @@ func (vehicleDatabase *VehicleDatabase) CreateVehicle(
 	return nil
 }
 
-func (vehicleDatabase *VehicleDatabase) FindVehicleByRenavam(
+func (vehicleDatabase *VehicleDatabase) FindVehicleByRenavamOrLicensePlate(
 	renavam string,
-) ([]map[string]interface{}, error) {
-	query := `SELECT * FROM vehicle WHERE renavam = ?;`
+	licensePlate string,
+) (*vehicleDomain.Vehicle, error) {
+	var dbVehicle *models.VehicleModel
 
-	dbVehicle, err := vehicleDatabase.connection.Rows(
+	query := `SELECT * FROM vehicle WHERE renavam = ? OR license_plate = ?;`
+
+	if err := vehicleDatabase.connection.Raw(
 		query,
+		&dbVehicle,
 		renavam,
-	)
-
-	if err != nil {
+		licensePlate,
+	); err != nil {
 		return nil, err
 	}
 
-	return dbVehicle, nil
+	if dbVehicle == nil {
+		return nil, nil
+	}
+
+	vehicle := vehicleDomain.NewVehicle(
+		dbVehicle.Id,
+		dbVehicle.Brand,
+		dbVehicle.Model,
+		dbVehicle.Year,
+		dbVehicle.Renavam,
+		dbVehicle.LicensePlate,
+		dbVehicle.Value,
+		dbVehicle.Cargo,
+		dbVehicle.Height,
+		dbVehicle.Width,
+		dbVehicle.Length,
+		dbVehicle.Type,
+	)
+
+	return vehicle, nil
 }
 
 func (vehicleDatabase *VehicleDatabase) FindVehicleById(
@@ -128,7 +150,7 @@ func (vehicleDatabase *VehicleDatabase) FindVehicleById(
 func (vehicleDatabase *VehicleDatabase) DeleteVehicle(vehicleId string) error {
 	var dbVehicle *models.VehicleModel
 
-	query := `DELETE FROM vehicle WHERE id = ?`
+	query := `DELETE FROM vehicle WHERE id = ?;`
 
 	if err := vehicleDatabase.connection.Raw(
 		query,

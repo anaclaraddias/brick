@@ -8,6 +8,7 @@ import (
 	"github.com/anaclaraddias/brick/core/port"
 	repositoryInterface "github.com/anaclaraddias/brick/core/port/repository"
 	policyUsecase "github.com/anaclaraddias/brick/core/usecase/policy"
+	policySharedmethod "github.com/anaclaraddias/brick/core/usecase/policy/sharedMethod"
 	"github.com/anaclaraddias/brick/infra/database/repository"
 	"github.com/anaclaraddias/brick/infra/requestEntity"
 	"github.com/gin-gonic/gin"
@@ -57,9 +58,14 @@ func (createPolicyCoverageHandler *CreatePolicyCoverageHandler) Handle(context *
 
 	createPolicyCoverageHandler.openDatabaseConnection()
 
+	policySharedmethod := policySharedmethod.NewPolicySharedMethod(
+		createPolicyCoverageHandler.policyDatabase,
+	)
+
 	err = policyUsecase.NewCreatePolicyCoverage(
 		createPolicyCoverageHandler.coverageDatabase,
 		createPolicyCoverageHandler.policyDatabase,
+		policySharedmethod,
 		policyCoverage,
 	).Execute()
 

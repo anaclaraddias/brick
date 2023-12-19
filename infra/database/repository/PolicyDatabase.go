@@ -186,3 +186,32 @@ func (policyDatabase *PolicyDatabase) DeletePolicyVehicle(
 
 	return nil
 }
+
+func (policyDatabase *PolicyDatabase) FindPolicyCoverageByPolicyIdAndCoverageId(
+	policyCoverage *policyDomain.PolicyCoverage,
+) (*policyDomain.PolicyCoverage, error) {
+	var dbPolicyCoverage *models.LinkedPolicyCoverageModel
+
+	query := `SELECT * FROM linked_policy_coverage where coverage_id = ? AND policy_id = ?;`
+
+	if err := policyDatabase.connection.Raw(
+		query,
+		&dbPolicyCoverage,
+		policyCoverage.CoverageId,
+		policyCoverage.PolicyId,
+	); err != nil {
+		return nil, err
+	}
+
+	if dbPolicyCoverage == nil {
+		return nil, nil
+	}
+
+	newPolicyCoverage := policyDomain.NewPolicyCoverage(
+		dbPolicyCoverage.Id,
+		dbPolicyCoverage.CoverageId,
+		dbPolicyCoverage.PolicyId,
+	)
+
+	return newPolicyCoverage, nil
+}

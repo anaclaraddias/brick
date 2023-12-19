@@ -8,6 +8,8 @@ import (
 	"github.com/anaclaraddias/brick/core/port"
 	repositoryInterface "github.com/anaclaraddias/brick/core/port/repository"
 	policyUsecase "github.com/anaclaraddias/brick/core/usecase/policy"
+	policySharedmethod "github.com/anaclaraddias/brick/core/usecase/policy/sharedMethod"
+	vehicleSharedMethod "github.com/anaclaraddias/brick/core/usecase/vehicle/sharedMethod"
 	"github.com/anaclaraddias/brick/infra/database/repository"
 	"github.com/anaclaraddias/brick/infra/requestEntity"
 	"github.com/gin-gonic/gin"
@@ -57,9 +59,19 @@ func (createPolicyVehicleHandler *CreatePolicyVehicleHandler) Handle(context *gi
 
 	createPolicyVehicleHandler.openDatabaseConnection()
 
+	policySharedmethod := policySharedmethod.NewPolicySharedMethod(
+		createPolicyVehicleHandler.policyDatabase,
+	)
+
+	vehicleSharedMethod := vehicleSharedMethod.NewVehicleSharedMethod(
+		createPolicyVehicleHandler.vehicleDatabase,
+	)
+
 	err = policyUsecase.NewCreatePolicyVehicle(
 		createPolicyVehicleHandler.policyDatabase,
 		createPolicyVehicleHandler.vehicleDatabase,
+		policySharedmethod,
+		vehicleSharedMethod,
 		policyVehicle,
 	).Execute()
 

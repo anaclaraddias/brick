@@ -8,7 +8,9 @@ import (
 	"github.com/anaclaraddias/brick/core/domain/helper"
 	"github.com/anaclaraddias/brick/core/port"
 	repositoryInterface "github.com/anaclaraddias/brick/core/port/repository"
+	policySharedmethod "github.com/anaclaraddias/brick/core/usecase/policy/sharedMethod"
 	vehicleUsecase "github.com/anaclaraddias/brick/core/usecase/vehicle"
+	vehicleSharedMethod "github.com/anaclaraddias/brick/core/usecase/vehicle/sharedMethod"
 	"github.com/anaclaraddias/brick/infra/database/repository"
 	"github.com/gin-gonic/gin"
 )
@@ -50,9 +52,19 @@ func (deleteVehicleHandler *DeleteVehicleHandler) Handle(context *gin.Context) {
 
 	deleteVehicleHandler.openDatabaseConnection()
 
+	policySharedmethod := policySharedmethod.NewPolicySharedMethod(
+		deleteVehicleHandler.policyDatabase,
+	)
+
+	vehicleSharedMethod := vehicleSharedMethod.NewVehicleSharedMethod(
+		deleteVehicleHandler.vehicleDatabase,
+	)
+
 	err = vehicleUsecase.NewDeleteVehicle(
 		deleteVehicleHandler.policyDatabase,
 		deleteVehicleHandler.vehicleDatabase,
+		policySharedmethod,
+		vehicleSharedMethod,
 		vehicleId,
 	).Execute()
 

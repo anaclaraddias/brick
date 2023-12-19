@@ -24,9 +24,9 @@ func NewCreateVehicle(
 }
 
 func (createVehicle *CreateVehicle) Execute() error {
-	// if err := createVehicle.verifyIfVehicleAlreadyExists(); err != nil {
-	// 	return err
-	// }
+	if err := createVehicle.verifyIfVehicleAlreadyExists(); err != nil {
+		return err
+	}
 
 	if err := createVehicle.vehicleDatabase.CreateVehicle(createVehicle.vehicle); err != nil {
 		return err
@@ -36,8 +36,9 @@ func (createVehicle *CreateVehicle) Execute() error {
 }
 
 func (createVehicle *CreateVehicle) verifyIfVehicleAlreadyExists() error {
-	vehicle, err := createVehicle.vehicleDatabase.FindVehicleByRenavam(
+	vehicle, err := createVehicle.vehicleDatabase.FindVehicleByRenavamOrLicensePlate(
 		createVehicle.vehicle.Renavam,
+		createVehicle.vehicle.LicensePlate,
 	)
 
 	if err != nil {

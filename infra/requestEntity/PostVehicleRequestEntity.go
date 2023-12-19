@@ -65,8 +65,18 @@ func (vehicle *PostVehicleRequestEntity) Validate() error {
 		return fmt.Errorf(helper.VehicleFieldCanNotBeEmptyConst, LicensePlateFieldConst)
 	}
 
+	if err := helper.ValidateLicensePlate(vehicle.LicensePlate); err != nil {
+		return err
+	}
+
+	vehicle.LicensePlate = helper.UnmaskLicensePlate(vehicle.LicensePlate)
+
 	if vehicle.Renavam == "" {
 		return fmt.Errorf(helper.VehicleFieldCanNotBeEmptyConst, RenavamFieldConst)
+	}
+
+	if err := helper.ValidateRenavam(vehicle.Renavam); err != nil {
+		return err
 	}
 
 	if vehicle.Value == 0 {

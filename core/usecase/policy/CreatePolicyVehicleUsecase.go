@@ -6,62 +6,47 @@ import (
 	"github.com/anaclaraddias/brick/core/domain/helper"
 	policyDomain "github.com/anaclaraddias/brick/core/domain/policy"
 	repositoryInterface "github.com/anaclaraddias/brick/core/port/repository"
+	sharedMethodInterface "github.com/anaclaraddias/brick/core/port/sharedMethod"
 )
 
 type CreatePolicyVehicle struct {
-	policyDatabase  repositoryInterface.PolicyRepositoryInterface
-	vehicleDatabase repositoryInterface.VehicleRepositoryInterface
-	policyVehicle   *policyDomain.PolicyVehicle
+	policyDatabase      repositoryInterface.PolicyRepositoryInterface
+	vehicleDatabase     repositoryInterface.VehicleRepositoryInterface
+	policySharedmethod  sharedMethodInterface.PolicySharedMethodInterface
+	vehicleSharedmethod sharedMethodInterface.VehicleSharedMethodInterface
+	policyVehicle       *policyDomain.PolicyVehicle
 }
 
 func NewCreatePolicyVehicle(
 	policyDatabase repositoryInterface.PolicyRepositoryInterface,
 	vehicleDatabase repositoryInterface.VehicleRepositoryInterface,
+	policySharedmethod sharedMethodInterface.PolicySharedMethodInterface,
+	vehicleSharedmethod sharedMethodInterface.VehicleSharedMethodInterface,
 	policyVehicle *policyDomain.PolicyVehicle,
 ) *CreatePolicyVehicle {
 	return &CreatePolicyVehicle{
-		policyDatabase:  policyDatabase,
-		vehicleDatabase: vehicleDatabase,
-		policyVehicle:   policyVehicle,
+		policyDatabase:      policyDatabase,
+		vehicleDatabase:     vehicleDatabase,
+		policySharedmethod:  policySharedmethod,
+		vehicleSharedmethod: vehicleSharedmethod,
+		policyVehicle:       policyVehicle,
 	}
 }
 
 func (createPolicyVehicle *CreatePolicyVehicle) Execute() error {
-	if err := createPolicyVehicle.verifyIfPolicyExists(); err != nil {
-		return err
-	}
-
-	if err := createPolicyVehicle.verifyIfVehicleExists(); err != nil {
-		return err
-	}
-
-	if err := createPolicyVehicle.policyDatabase.CreatePolicyVehicle(
-		createPolicyVehicle.policyVehicle,
+	if err := createPolicyVehicle.policySharedmethod.VerifyIfPolicyExists(
+		createPolicyVehicle.policyVehicle.PolicyId,
 	); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func (createPolicyVehicle *CreatePolicyVehicle) verifyIfPolicyExists() error {
-	policy, err := createPolicyVehicle.policyDatabase.FindPolicyById(
-		createPolicyVehicle.policyVehicle.PolicyId,
-	)
-
-	if err != nil {
+	if err := createPolicyVehicle.vehicleSharedmethod.VerifyIfVehicleExists(
+		createPolicyVehicle.policyVehicle.VehicleId,
+	); err != nil {
 		return err
 	}
 
-	if policy == nil {
-		return fmt.Errorf(helper.PolicyNotFoundConst)
-	}
-
-	return nil
-}
-
-func (createPolicyVehicle *CreatePolicyVehicle) verifyIfVehicleExists() error {
-	vehicle, err := createPolicyVehicle.vehicleDatabase.FindVehicleById(
+	isVehicleInPolicy, _, err := createPolicyVehicle.policySharedmethod.VerifyIfVehicleIsInPolicy(
 		createPolicyVehicle.policyVehicle.VehicleId,
 	)
 
@@ -69,8 +54,14 @@ func (createPolicyVehicle *CreatePolicyVehicle) verifyIfVehicleExists() error {
 		return err
 	}
 
-	if vehicle == nil {
-		return fmt.Errorf(helper.VehicleNotFoundConst)
+	if isVehicleInPolicy {
+		return fmt.Errorf(helper.VehicleAlreadyIsInPolicyConst)
+	}
+
+	if err := createPolicyVehicle.policyDatabase.CreatePolicyVehicle(
+		createPolicyVehicle.policyVehicle,
+	); err != nil {
+		return err
 	}
 
 	return nil

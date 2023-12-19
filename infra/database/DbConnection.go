@@ -87,49 +87,6 @@ func (db *DatabaseConnection) Raw(query string, statment interface{}, values ...
 	return nil
 }
 
-func (db *DatabaseConnection) Rows(query string, values ...any) ([]map[string]interface{}, error) {
-	rows, err := db.connection.Raw(query, values...).Rows()
-
-	if err != nil {
-		return nil, fmt.Errorf(ExecuteRowsQueryErrorConst, err)
-	}
-
-	columns, err := rows.Columns()
-
-	if err != nil {
-		return nil, err
-	}
-
-	count := len(columns)
-	statementPtrs := make([]interface{}, count)
-
-	for i := range statementPtrs {
-		var v interface{}
-		statementPtrs[i] = &v
-	}
-
-	result := make([]map[string]interface{}, 0)
-
-	for rows.Next() {
-		err := rows.Scan(statementPtrs...)
-		if err != nil {
-			continue
-		}
-		row := make(map[string]interface{})
-		for i, col := range columns {
-			val := *(statementPtrs[i].(*interface{}))
-			row[col] = handleScanReturn(val)
-		}
-		result = append(result, row)
-	}
-
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-
-	return result, nil
-}
-
 func handleScanReturn(result any) any {
 	switch value := result.(type) {
 	case bool:

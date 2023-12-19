@@ -56,3 +56,36 @@ func (userDatabase *UserDatabase) CreateUser(user *userDomain.User) error {
 
 	return nil
 }
+
+func (userDatabase *UserDatabase) FindUserByCpfOrCnpj(
+	cpf string,
+	cnpj *string,
+) (*userDomain.User, error) {
+	var dbUser *models.UserModel
+
+	query := `SELECT * FROM users WHERE cpf = ? OR cnpj = ?;`
+
+	if err := userDatabase.connection.Raw(
+		query,
+		&dbUser,
+		cpf,
+		cnpj,
+	); err != nil {
+		return nil, err
+	}
+
+	if dbUser == nil {
+		return nil, nil
+	}
+
+	user := userDomain.NewUser(
+		dbUser.Id,
+		dbUser.Name,
+		dbUser.Email,
+		dbUser.Cellphone,
+		dbUser.Cpf,
+		dbUser.Cnpj,
+	)
+
+	return user, nil
+}

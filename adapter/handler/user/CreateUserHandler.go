@@ -58,7 +58,8 @@ func (createUserHandler *CreateUserHandler) Handle(context *gin.Context) {
 
 	err = userUsecase.NewCreateUser(
 		createUserHandler.userDatabase,
-	).Execute(user)
+		user,
+	).Execute()
 
 	if err != nil {
 		jsonResponse.ThrowError(

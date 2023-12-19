@@ -8,5 +8,5 @@ const (
 
 	PostPolicyConst         = "apólice criada com sucesso"
 	PostPolicyVehicleConst  = "veículo adicionado a apólice com sucesso"
-	PostPolicyCoverageConst = "veículo adicionado a apólice com sucesso"
+	PostPolicyCoverageConst = "cobertura adicionada a apólice com sucesso"
 )
