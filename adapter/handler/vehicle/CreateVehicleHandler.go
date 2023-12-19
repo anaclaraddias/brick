@@ -30,7 +30,7 @@ func NewCreateVehicleHandler(
 }
 
 func (createVehicleHandler *CreateVehicleHandler) Handle(context *gin.Context) {
-	jsonResponse := routes.NewJsonResponse(context)
+	jsonResponse := routes.NewJsonResponse(context, createVehicleHandler.connection)
 
 	decodedVehicle, err := createVehicleHandler.decodeRequest(context)
 

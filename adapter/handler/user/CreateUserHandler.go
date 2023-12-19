@@ -30,7 +30,7 @@ func NewCreateUserHandler(
 }
 
 func (createUserHandler *CreateUserHandler) Handle(context *gin.Context) {
-	jsonResponse := routes.NewJsonResponse(context)
+	jsonResponse := routes.NewJsonResponse(context, createUserHandler.connection)
 
 	decodedUser, err := createUserHandler.decodeRequest(context)
 

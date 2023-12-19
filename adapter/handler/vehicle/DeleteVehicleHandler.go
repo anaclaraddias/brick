@@ -37,7 +37,7 @@ func NewDeleteVehicleHandler(
 }
 
 func (deleteVehicleHandler *DeleteVehicleHandler) Handle(context *gin.Context) {
-	jsonResponse := routes.NewJsonResponse(context)
+	jsonResponse := routes.NewJsonResponse(context, deleteVehicleHandler.connection)
 
 	vehicleId, err := deleteVehicleHandler.verifyVehicleId(context)
 

@@ -33,7 +33,7 @@ func NewCreatePolicyVehicleHandler(
 }
 
 func (createPolicyVehicleHandler *CreatePolicyVehicleHandler) Handle(context *gin.Context) {
-	jsonResponse := routes.NewJsonResponse(context)
+	jsonResponse := routes.NewJsonResponse(context, createPolicyVehicleHandler.connection)
 
 	decodedPolicyVehicle, err := createPolicyVehicleHandler.decodeRequest(context)
 

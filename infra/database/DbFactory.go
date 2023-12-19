@@ -10,7 +10,7 @@ import (
 const (
 	DatabaseUsernameConst = "root"
 	DatabasePasswordConst = "admin"
-	DatabaseHostConst     = "localhost"
+	DatabaseHostConst     = "postgres"
 	DatabasePortConst     = "5432"
 	DatabaseNameConst     = "brickdb"
 )

@@ -86,29 +86,3 @@ func (db *DatabaseConnection) Raw(query string, statment interface{}, values ...
 
 	return nil
 }
-
-func handleScanReturn(result any) any {
-	switch value := result.(type) {
-	case bool:
-		return value
-	case int64:
-		return value
-	case float32:
-		return value
-	case float64:
-		return value
-	case int:
-		return value
-	case string:
-		return value
-	case []byte:
-		return string(value)
-	case time.Time:
-		return value.Format(DATETIME_FORMAT)
-	case nil:
-		return nil
-	default:
-		fmt.Println("tipo de resultado desconhecido")
-		return nil
-	}
-}

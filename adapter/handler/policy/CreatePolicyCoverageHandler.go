@@ -32,7 +32,7 @@ func NewCreatePolicyCoverageHandler(
 }
 
 func (createPolicyCoverageHandler *CreatePolicyCoverageHandler) Handle(context *gin.Context) {
-	jsonResponse := routes.NewJsonResponse(context)
+	jsonResponse := routes.NewJsonResponse(context, createPolicyCoverageHandler.connection)
 
 	decodedPolicyCoverage, err := createPolicyCoverageHandler.decodeRequest(context)
 
