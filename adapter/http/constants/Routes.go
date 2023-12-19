@@ -3,7 +3,8 @@ package routesConsts
 import "net/http"
 
 const (
-	PostVehicleConst = "/vehicle"
+	PostVehicleConst   = "/vehicle"
+	DeleteVehicleConst = "/vehicle"
 
 	PostUserConst = "/user"
 

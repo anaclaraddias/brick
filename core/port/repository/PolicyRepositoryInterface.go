@@ -7,4 +7,6 @@ type PolicyRepositoryInterface interface {
 	FindPolicyById(policyId string) (*policyDomain.Policy, error)
 	CreatePolicyVehicle(policyVehicle *policyDomain.PolicyVehicle) error
 	CreatePolicyCoverage(policyCoverage *policyDomain.PolicyCoverage) error
+	FindPolicyVehicleByVehicleId(vehicleId string) (*policyDomain.PolicyVehicle, error)
+	DeletePolicyVehicle(policyVehicleId string) error
 }

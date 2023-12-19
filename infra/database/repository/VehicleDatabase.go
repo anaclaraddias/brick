@@ -124,3 +124,19 @@ func (vehicleDatabase *VehicleDatabase) FindVehicleById(
 
 	return vehicle, nil
 }
+
+func (vehicleDatabase *VehicleDatabase) DeleteVehicle(vehicleId string) error {
+	var dbVehicle *models.VehicleModel
+
+	query := `DELETE FROM vehicle WHERE id = ?`
+
+	if err := vehicleDatabase.connection.Raw(
+		query,
+		&dbVehicle,
+		vehicleId,
+	); err != nil {
+		return err
+	}
+
+	return nil
+}

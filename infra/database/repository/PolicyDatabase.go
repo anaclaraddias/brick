@@ -140,3 +140,49 @@ func (policyDatabase *PolicyDatabase) CreatePolicyCoverage(
 
 	return nil
 }
+
+func (policyDatabase *PolicyDatabase) FindPolicyVehicleByVehicleId(
+	vehicleId string,
+) (*policyDomain.PolicyVehicle, error) {
+	var dbPolicyVehicle *models.LinkedPolicyVehicleModel
+
+	query := `SELECT * FROM linked_policy_vehicle where vehicle_id = ?`
+
+	if err := policyDatabase.connection.Raw(
+		query,
+		&dbPolicyVehicle,
+		vehicleId,
+	); err != nil {
+		return nil, err
+	}
+
+	if dbPolicyVehicle == nil {
+		return nil, nil
+	}
+
+	policyVehicle := policyDomain.NewPolicyVehicle(
+		dbPolicyVehicle.Id,
+		dbPolicyVehicle.VehicleId,
+		dbPolicyVehicle.VehicleId,
+	)
+
+	return policyVehicle, nil
+}
+
+func (policyDatabase *PolicyDatabase) DeletePolicyVehicle(
+	policyVehicleId string,
+) error {
+	var dbPolicyVehicle *models.LinkedPolicyVehicleModel
+
+	query := `DELETE FROM linked_policy_vehicle WHERE id = ?`
+
+	if err := policyDatabase.connection.Raw(
+		query,
+		&dbPolicyVehicle,
+		policyVehicleId,
+	); err != nil {
+		return err
+	}
+
+	return nil
+}

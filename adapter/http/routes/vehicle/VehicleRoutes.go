@@ -11,6 +11,7 @@ import (
 
 const (
 	CreateVehicleConst string = "CreateVehicle"
+	DeleteVehicleConst string = "DeleteVehicle"
 )
 
 type VehicleRoutes struct {
@@ -32,6 +33,11 @@ func (vehicleRoutes *VehicleRoutes) Register() {
 		routesConsts.PostVehicleConst,
 		vehicleRoutes.vehicleHandlers[CreateVehicleConst].Handle,
 	)
+
+	vehicleRoutes.DELETE(
+		routesConsts.DeleteVehicleConst,
+		vehicleRoutes.vehicleHandlers[DeleteVehicleConst].Handle,
+	)
 }
 
 func createVehicleHandlerMap() map[string]port.HandlerInterface {
@@ -40,5 +46,6 @@ func createVehicleHandlerMap() map[string]port.HandlerInterface {
 
 	return map[string]port.HandlerInterface{
 		CreateVehicleConst: vehicleHandler.NewCreateVehicleHandler(connection, uuid),
+		DeleteVehicleConst: vehicleHandler.NewDeleteVehicleHandler(connection, uuid),
 	}
 }

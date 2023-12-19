@@ -74,7 +74,7 @@ func (createPolicyCoverageHandler *CreatePolicyCoverageHandler) Handle(context *
 
 	jsonResponse.SendJson(
 		routesConsts.MessageKeyConst,
-		helper.PostPolicyVehicleConst,
+		helper.PostPolicyCoverageConst,
 		routesConsts.StatusOk,
 	)
 }
